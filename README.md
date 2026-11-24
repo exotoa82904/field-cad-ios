@@ -2,9 +2,9 @@
 
 以網址開啟的本機 CAD 工具。程式不提供圖檔上傳端點，開檔使用 File API，DWG 由 Web Worker / WebAssembly 解析，圖面只保存在瀏覽器記憶體。重新整理前請另存 DXF。
 
-iOS 0.3.0 專案與離線封裝位於 `ios/`，操作、Mac 建置及 TestFlight 前置條件見 [iOS 說明](docs/IOS-README.md)，已測／待測項目見 [iOS 驗收紀錄](docs/IOS-ACCEPTANCE.md)。目前 Windows 環境未做 Xcode 編譯、iOS 模擬器或實機驗證。執行 `pnpm ios:sync` 可重建完整離線 App 資源；`pnpm ios:package` 產生可交接的專案 ZIP。
+iOS 0.3.0 專案與離線封裝位於 `ios/`，操作、Mac 建置及 TestFlight 前置條件見 [iOS 說明](docs/IOS-README.md)，已測／待測項目見 [iOS 驗收紀錄](docs/IOS-ACCEPTANCE.md)。已由雲端 Mac 通過 Xcode 模擬器編譯及八項 WKWebView／原生相容性檢查；尚未做 iPhone 實機驗收或上傳 TestFlight。執行 `pnpm ios:sync` 可重建完整離線 App 資源；`pnpm ios:package` 產生可交接的專案 ZIP。
 
-沒有 Mac 時可接續 [GitHub 雲端 Mac 方案](docs/IOS-NO-MAC.md)。工作流程已準備，尚未執行；使用公開校正圖，不上傳工程圖。
+沒有 Mac 時可沿用已執行的 [GitHub 雲端 Mac 方案](docs/IOS-NO-MAC.md)。[成功工作與日誌](https://github.com/exotoa82904/field-cad-ios/actions/runs/45338630377)、[核對報告](docs/IOS-CLOUD-RESULT.json)使用公開校正圖，不含工程圖。
 
 ## 啟動與建置
 

@@ -1,16 +1,16 @@
 # iOS 驗收狀態與步驟
 
-日期：2026-11-24。Windows / Node 24.22.1 / Chrome 158，手機版面 390 × 844。**以下已通過項目都是桌面瀏覽器或程式測試；iOS 模擬器及實機目前均未測試。**
+日期：2026-11-24。桌面環境為 Windows / Node 24.22.1 / Chrome 158，手機版面 390 × 844。**另已完成雲端 Mac 的 Xcode 編譯與 iOS 模擬器相容性檢查；iPhone 實機仍未測試。** 下文分別記錄兩種環境。
 
 ## 現有專案盤點
 
 | 共用能力 | 網站已有證據 | iOS 狀態 |
 |---|---|---|
-| DWG／DXF、本機 Worker／WASM、圖層 | 三份 AC1032 DWG、AutoCAD 原生 DXF 曾開啟 | 原程式沿用，WKWebView 待測 |
+| DWG／DXF、本機 Worker／WASM、圖層 | 三份 AC1032 DWG、AutoCAD 原生 DXF 曾開啟 | 校正 DWG／DXF 已在 WKWebView 解析；實機工程圖與圖層操作待測 |
 | WCS、端點／中點／圓心、距離與面積 | 自動測試與 AutoCAD 座標對照 | 手機準星確認已實作，iPhone 待測 |
 | 全包／交叉窗選、單選／批次移動、旋轉、復原、刪除 | 網站操作及 DXF 在 AutoCAD 重開 | 共用核心；手機操作待實機 |
 | TEXT／箭頭／原生 DIMENSION、DXF 交換副本 | AutoCAD 2027 重開核對 | 手機 UI／分享路徑已實作，待實機 |
-| 全圖／局部向量 PDF、可見圖層及標註 | 網站 PDF 及預覽核對 | 共用輸出；原生分享待測 |
+| 全圖／局部向量 PDF、可見圖層及標註 | 網站 PDF 及預覽核對 | 模擬器向量 PDF 與原生檔案讀寫通過；分享送達待測 |
 
 幾何與輸出主要位於 `src/model.js`、`geometry.js`、`dxf.js`、`pdf.js`、`plot.js`；Worker 在 `cad-worker.js`、`dwg.js`。新增手機 UI／手勢於 `phone.js`、`touch.js`，平台介面於 `platform.js`。兩個介面操作同一模型、相同量測函式與歷史堆疊。
 
@@ -38,9 +38,30 @@
 
 15 項程式測試已通過：既有 11 項與新增四項，涵蓋縮放 WCS 錨點、雙指不誤選、放手不提交量測點及 UTF-8 分段寫檔完整性。沒有在 Windows 假造 iOS 測試結果。
 
-後續補備雲端 Mac 流程及專用 `ios-ci` 版本，只有該版本才會自動跑原生檢查；一般 App 已檢查不含自動執行入口。兩種網頁資源封裝及 Shell 語法檢查通過，但雲端 Mac 工作尚未執行。
+後續補備雲端 Mac 流程及專用 `ios-ci` 版本，只有該版本才會自動跑原生檢查；一般 App 已檢查不含自動執行入口。兩種網頁資源封裝及 Shell 語法檢查通過；雲端實際結果如下。
 
 公開校正 DWG 為 18581 bytes、DXF 為 49503 bytes，都是程式自建幾何並經 AutoCAD 2027 存成 AC1032，非使用者工程圖。共用核心讀兩種格式均為 11 個圖元，起點及已知 120 m 距離通過。內建示範圖也換成此標準 DXF；新增中文文字和 5 m 原生尺寸後，用 AutoCAD 重開，確認線長 120、標註數 2、尺寸值 5。
+
+## 雲端 Mac 與模擬器實測
+
+[工作 #2](https://github.com/exotoa82904/field-cad-ios/actions/runs/45338630377) 於 2026-11-24 通過。來源 commit `9cb963dcb90c652e96558451f3eeda9473270fde`，macOS 26.7.2 arm64 / Xcode 26.6 (17F113)，iPhone 17 Pro 模擬器、iOS 26.5 runtime。裝置與版本由 simctl 清單及啟動日誌核對；WKWebView 的 user agent 顯示 18_7，不能用它推定模擬器版本。完整 [核對報告](IOS-CLOUD-RESULT.json) 與 [模擬器截圖](ios-simulator.png) 已保留在原始碼。
+
+| 檢查 | 實際結果 |
+|---|---|
+| 乾淨環境安裝／15 項測試／Xcode Debug 模擬器編譯 | 通過；首輪的網頁資源與 Capacitor 更新順序問題已修正 |
+| WKWebView / Module Worker / WASM | 通過；引擎預熱 214 ms |
+| 標準 AC1032 DXF / File.arrayBuffer | 49503 bytes、11 圖元、3 圖層；106 ms |
+| 標準 AC1032 DWG | 18581 bytes、11 圖元、3 圖層；1024 ms |
+| 原始 WCS 與已知距離 | 兩種格式起點 (300000,2770000)，終點 (300120,2770000)，120 m |
+| Canvas2D | 繪圖像素讀回一致；App 校正圖畫面已查看 |
+| 向量 PDF | 4377973 bytes，A4 橫式，211 線段、1 文字；Poppler 畫面核對，PDF 無影像 XObject |
+| 原生 Filesystem 分段寫入／讀回 PDF | 4377973 bytes 逐位元組相同 |
+| 原生 Clipboard | `300000.123456789,2770000.123456789` 完整寫入／讀回一致 |
+| Share | 只確認原生插件已註冊；沒有實際分享送達 |
+
+這是打包的 `capacitor://localhost` 資源與原生插件測試，尚未關閉網路驗證飛航模式。小校正圖的耗時不能當成 9.52 MiB 工程圖或實體 iPhone 的效能。沒有宣稱「檔案」選擇器、觸控鎖點、窗選／移動、全圖與局部 PDF 完整互動流程已在 iPhone 通過。
+
+使用者目前沒有 Mac，且只有一般 Apple 帳號；尚未取得開發者會員、設定簽署或上傳 TestFlight。第一里程碑仍待實機驗收。
 
 ## 第一里程碑：逐台裝置執行
 

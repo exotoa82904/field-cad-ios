@@ -1,0 +1,140 @@
+{
+  "version": "0.3.0",
+  "environment": "iOS Simulator via CI",
+  "runtime": "ios",
+  "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148",
+  "origin": "capacitor://localhost",
+  "createdAt": "2026-11-24T06:18:06.962Z",
+  "status": "pass",
+  "checks": {
+    "NativeBridge": {
+      "status": "pass",
+      "shareSheetTested": false,
+      "ms": 0
+    },
+    "WASMWorker": {
+      "status": "pass",
+      "engineReady": true,
+      "ms": 214
+    },
+    "DXFFileAPI": {
+      "status": "pass",
+      "version": "AC1032",
+      "entities": 11,
+      "primitives": 11,
+      "layers": 3,
+      "unit": 6,
+      "timings": {
+        "modelMs": 23.000000000000007,
+        "workerMs": 24.000000000000007
+      },
+      "firstLine": [
+        300000,
+        2770000,
+        300120,
+        2770000
+      ],
+      "firstLineLength": 120,
+      "warnings": [],
+      "ms": 106
+    },
+    "DWG": {
+      "status": "pass",
+      "version": "AC1032",
+      "entities": 11,
+      "primitives": 11,
+      "layers": 3,
+      "unit": 6,
+      "timings": {
+        "referencesMs": 99,
+        "conversionMs": 81,
+        "repairMs": 35,
+        "totalMs": 215,
+        "modelMs": 602,
+        "workerMs": 978
+      },
+      "firstLine": [
+        300000,
+        2770000,
+        300120,
+        2770000
+      ],
+      "firstLineLength": 120,
+      "warnings": [],
+      "ms": 1024
+    },
+    "Canvas2D": {
+      "status": "pass",
+      "pixel": [
+        87,
+        223,
+        193,
+        255
+      ],
+      "ms": 9
+    },
+    "VectorPDF": {
+      "status": "pass",
+      "bytes": 4377973,
+      "lines": 211,
+      "texts": 1,
+      "ms": 997
+    },
+    "NativePDFFileRoundtrip": {
+      "status": "pass",
+      "bytes": 4377973,
+      "exactBinaryMatch": true,
+      "ms": 626
+    },
+    "NativeClipboard": {
+      "status": "pass",
+      "exactMatch": true,
+      "ms": 322
+    }
+  },
+  "notTested": [
+    "physical iPhone",
+    "Files document picker",
+    "airplane mode on a real device",
+    "share sheet delivery",
+    "real engineering drawings"
+  ],
+  "finishedAt": "2026-11-24T06:18:10.596Z",
+  "provenance": {
+    "repository": "https://github.com/exotoa82904/field-cad-ios",
+    "run": "https://github.com/exotoa82904/field-cad-ios/actions/runs/45338630377",
+    "sourceCommit": "9cb963dcb90c652e96558451f3eeda9473270fde",
+    "macOS": "26.7.2 arm64",
+    "xcode": "26.6 (17F113)",
+    "simulator": {
+      "name": "iPhone 17 Pro",
+      "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-5",
+      "runtimeVersion": "26.5",
+      "note": "Selected device ID verified against simctl inventory and boot log; WebView user agent reports 18_7 and is not used to infer simulator OS."
+    },
+    "artifactSha256": "2a4594ab98558e21ad353fb616dcc9d26780c7d9b48537aa32aee9a428e48676"
+  },
+  "fixtures": {
+    "dwg": {
+      "version": "AC1032",
+      "bytes": 18581
+    },
+    "dxf": {
+      "version": "AC1032",
+      "bytes": 49503
+    },
+    "synthetic": true,
+    "userEngineeringFiles": false
+  },
+  "pdfInspection": {
+    "pages": 1,
+    "size": {
+      "width": 841.89,
+      "height": 595.276
+    },
+    "strokeOperations": 10,
+    "lineSegments": 211,
+    "textOperations": 1,
+    "xObjects": 0
+  }
+}

@@ -15,6 +15,7 @@ for folder in ['src', 'scripts', 'tests', 'docs', 'ios', 'public', '.github']:
 with ZipFile(target, 'w', ZIP_DEFLATED, compresslevel=6) as out:
     for p in sorted(files):
         out.write(p, 'FieldCAD/' + p.relative_to(root).as_posix())
-    out.writestr('FieldCAD/BUILD-STATUS.json', json.dumps({'project': 'Capacitor iOS / SPM', 'webAssets': 'built and bundled', 'xcodeBuild': 'not run: Windows host', 'iOSSimulator': 'not tested', 'cloudMacWorkflow': 'prepared, not executed', 'physicalIPhone': 'not tested', 'TestFlight': 'not uploaded', 'containsUserDrawings': False, 'containsPublicSyntheticCalibration': True}, ensure_ascii=False, indent=2))
+    evidence = json.loads((root / 'docs/IOS-CLOUD-RESULT.json').read_text(encoding='utf-8'))
+    out.writestr('FieldCAD/BUILD-STATUS.json', json.dumps({'project': 'Capacitor iOS / SPM', 'webAssets': 'normal offline app, built and bundled', 'xcodeBuild': 'CI simulator build passed for the source commit identified in lastCloudValidation', 'iOSSimulator': '8 compatibility checks passed; dedicated CI build, not physical iPhone acceptance', 'lastCloudValidation': {'status': evidence['status'], **evidence['provenance']}, 'physicalIPhone': 'not tested', 'TestFlight': 'not uploaded; developer membership and signing pending', 'containsUserDrawings': False, 'containsPublicSyntheticCalibration': True}, ensure_ascii=False, indent=2))
 print(target)
 print(f'{target.stat().st_size:,} bytes; source + offline app assets, no node_modules, credentials or engineering samples.')

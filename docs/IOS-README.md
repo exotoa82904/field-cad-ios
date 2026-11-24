@@ -2,9 +2,9 @@
 
 這是從網站 0.2.1 接續的 Capacitor 8.6.2 / WKWebView 專案。網頁核心、WCS、量測、DXF 與向量 PDF 共用。現有公開網站未在這次工作中更新。
 
-目前交付：Xcode 專案、離線網頁資源、手機介面、官方檔案／分享／剪貼簿插件、相容性檢查頁、建置與驗收步驟。**本環境為 Windows；未執行 Xcode 編譯、iOS 模擬器或 iPhone 實機，未產生已簽署 IPA，未上傳 TestFlight。** 目前不能把第一里程碑標記為 iOS 實機通過。
+目前交付：Xcode 專案、離線網頁資源、手機介面、官方檔案／分享／剪貼簿插件、相容性檢查頁、建置與驗收步驟。**Windows 開發環境已透過雲端 Mac 執行 Xcode 模擬器編譯及 App 內八項相容性檢查，全部通過；iPhone 實機、簽署 IPA 與 TestFlight 尚未完成。** 目前不能把第一里程碑標記為 iOS 實機通過。
 
-使用者目前沒有 Mac，後續採 [雲端 Mac 建置方案](IOS-NO-MAC.md)。專案附帶 GitHub Actions 的編譯與 WKWebView 相容性檢查工作流程；目前尚未連接 GitHub 或執行該工作。
+使用者目前沒有 Mac，已採 [雲端 Mac 建置方案](IOS-NO-MAC.md)。[工作 #2](https://github.com/exotoa82904/field-cad-ios/actions/runs/45338630377) 通過；環境、來源 commit、校正檔大小、耗時與未測項目見 [報告](IOS-CLOUD-RESULT.json)。模擬器為 iPhone 17 Pro / iOS 26.5，並非實體手機。
 
 ## 首次在 Mac 建置
 
@@ -49,7 +49,7 @@ sh scripts/ios-archive.sh
 
 App 的「更多 → 裝置檢查」會在實際執行環境中檢查：WASM + Module Worker、校正 DXF 的原始座標及 120 單位距離、PDF 字型與向量輸出。可另外選真實 DWG／DXF，記錄版本、大小、圖元數、解析階段時間。報告清楚區分瀏覽器和 iOS WKWebView，需填實機／模擬器與型號，不會自動假稱實機通過。報告不會上傳；使用者可以自行存檔或分享。
 
-原生整合目前採用最小候選方案：輸入用 WKWebView 的檔案選擇器；輸出用官方 Filesystem + Share；複製座標用 Clipboard。這些 iOS 路徑尚未實測，需依閘門結果決定是否改為原生 UIDocumentPicker 或調整引擎。若舊系統出現 Worker、WebAssembly 或 CSP 相容性問題，先保留記錄，再比較提高最低系統、替代引擎或其他處理方式；不自動上傳工程圖轉檔。
+原生整合目前採用最小候選方案：輸入用 WKWebView 的檔案選擇器；輸出用官方 Filesystem + Share；複製座標用 Clipboard。模擬器已通過 WASM Worker、DWG／DXF File API、Canvas2D、向量 PDF、原生檔案讀寫及 Clipboard；Share 插件存在也已確認，但「檔案」選擇器、分享選單的實際送達與飛航模式仍待實機。若舊系統出現 Worker、WebAssembly 或 CSP 相容性問題，先保留記錄，再比較提高最低系統、替代引擎或其他處理方式；不自動上傳工程圖轉檔。
 
 ## 手機操作
 
