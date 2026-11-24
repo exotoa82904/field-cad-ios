@@ -1,6 +1,21 @@
 name: iOS source and simulator build
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'scripts/**'
+      - 'ios/**'
+      - 'public/**'
+      - 'tests/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'vite.config.js'
+      - 'capacitor.config.json'
+      - 'index.html'
+      - '.github/workflows/ios-simulator.yml'
 permissions:
   contents: read
 jobs:
