@@ -1,0 +1,6 @@
+/* Only style the fallback on older WebKit; modern desktop dialogs keep their layout. */
+dialog.dialog-fallback{position:absolute;left:0;right:0;margin:auto;display:block}
+dialog.dialog-fallback:not([open]){display:none}
+dialog.dialog-fallback+.backdrop{position:fixed;inset:0;background:#030b14b8}
+._dialog_overlay{position:fixed;inset:0}
+dialog.dialog-fallback.fixed{position:fixed;top:50%;transform:translate(0,-50%)}

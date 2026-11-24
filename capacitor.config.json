@@ -1,0 +1,8 @@
+{
+  "appId": "org.fieldcad.offline",
+  "appName": "現場 CAD",
+  "webDir": "dist",
+  "backgroundColor": "#0d1722",
+  "ios": { "contentInset": "never", "scrollEnabled": false, "allowsLinkPreview": false },
+  "server": { "hostname": "localhost", "iosScheme": "capacitor" }
+}

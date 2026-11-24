@@ -1,0 +1,15 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+const config=JSON.parse(fs.readFileSync('capacitor.config.json','utf8'));
+assert.equal(config.server?.url,undefined,'Runtime must not depend on a remote website');
+assert.equal(config.webDir,'dist');assert.equal(config.server.iosScheme,'capacitor');
+const root='ios/App/App/public';for(const file of ['index.html','assets/libredwg-web.wasm','fonts/NotoSansTC.ttf','LICENSE','source.zip','libredwg-corresponding-source.zip'])assert.ok(fs.statSync(path.join(root,file)).size>0,'Missing offline asset: '+file);
+const flavor=JSON.parse(fs.readFileSync(path.join(root,'field-cad-build.json'),'utf8'));assert.equal(flavor.testing,process.argv.includes('--ci'),'Wrong build flavor');
+const html=fs.readFileSync(path.join(root,'index.html'),'utf8');assert.ok(!/src=["']https?:/i.test(html));assert.ok(/viewport-fit=cover/.test(html));
+const pbx=fs.readFileSync('ios/App/App.xcodeproj/project.pbxproj','utf8');assert.ok(pbx.includes('PrivacyInfo.xcprivacy in Resources'));assert.ok(pbx.includes(config.appId));
+const swift=fs.readFileSync('ios/App/CapApp-SPM/Package.swift','utf8');for(const name of ['filesystem','share','clipboard'])assert.ok(swift.includes('../../../node_modules/@capacitor/'+name));
+for(const f of fs.readdirSync(path.join(root,'assets')).filter(f=>f.endsWith('.js')))assert.ok(!fs.readFileSync(path.join(root,'assets',f),'utf8').includes('cad-local-validation-file'),'Private acceptance bridge must not ship');
+if(!flavor.testing)for(const f of fs.readdirSync(path.join(root,'assets')).filter(f=>f.endsWith('.js')))assert.ok(!fs.readFileSync(path.join(root,'assets',f),'utf8').includes('field-cad-ci-result.json'),'Simulator autorun must not ship in the normal app');
+console.log('Offline assets, portable iOS project, native plugins, privacy resource and production boundary checks passed.');
+console.log('This is a source/package check; it does not run Xcode, a simulator or WKWebView.');

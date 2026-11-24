@@ -1,0 +1,21 @@
+Field CAD - GPL-3.0. Corresponding source is available at /source.zip.
+This source package does not contain user drawings or validation samples.
+
+@mlightcad/libredwg-web 0.9.3 / LibreDWG - GPL-3.0
+https://github.com/mlightcad/libredwg-web
+Source: v0.9.3, commit c8d0bc8f4c0dfac6fcde9f8347867ed1c35ffad0.
+Corresponding source (without sample binaries or compiled artifacts):
+/libredwg-corresponding-source.zip
+Upstream wasm/.inputs-sha256 matches the installed npm package.
+
+dxf-parser 1.1.2 - MIT - https://github.com/gdsestimating/dxf-parser
+pdf-lib 1.17.1 - MIT - https://github.com/Hopding/pdf-lib
+@pdf-lib/fontkit 1.1.1 - MIT - https://github.com/Hopding/fontkit
+Noto Sans TC - SIL Open Font License 1.1 - see fonts/OFL.txt
+https://github.com/google/fonts/tree/main/ofl/notosanstc
+
+Capacitor core/ios/cli 8.6.2 - MIT - https://github.com/ionic-team/capacitor
+Capacitor Filesystem 8.1.5, Share 8.0.3, Clipboard 8.0.1 - MIT
+https://github.com/ionic-team/capacitor-plugins
+dialog-polyfill 0.5.6 - BSD - https://github.com/GoogleChrome/dialog-polyfill
+Bundled license texts: /licenses/. Native transitive Swift packages are resolved by ios/App/CapApp-SPM/Package.swift.

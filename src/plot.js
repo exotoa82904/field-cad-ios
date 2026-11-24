@@ -1,0 +1,3 @@
+export function paperSize(paper,orientation){const sizes={A4:[595.276,841.89],A3:[841.89,1190.551]};const s=sizes[paper]||sizes.A4;return orientation==='landscape'?[s[1],s[0]]:s;}
+export function pageTransform(range,w,h,margin=28){const rw=Math.max(range.maxX-range.minX,1e-9),rh=Math.max(range.maxY-range.minY,1e-9),scale=Math.min((w-margin*2)/rw,(h-margin*2)/rh);const ox=(w-rw*scale)/2,oy=(h-rh*scale)/2;return {scale,x:x=>ox+(x-range.minX)*scale,y:y=>oy+(y-range.minY)*scale,box:{x:ox,y:oy,width:rw*scale,height:rh*scale}};}
+export function plotColor(hex){let n=parseInt(hex.slice(1),16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;if(r+g+b>550)return '#263647';if(r>220&&g>180)return '#99791f';return hex;}

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="description" content="DWG 與 DXF 留在本機，現場快速看圖、精確量測、編輯與向量 PDF 出圖。"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'"><title>現場 CAD｜本機看圖與量測</title></head>
+<body>
+ <div id="app">
+  <header class="topbar">
+   <div class="brand"><span class="brand-mark">⌖</span><div><strong>現場 CAD</strong><small>FIELD VIEW / 02.1</small></div></div>
+   <div class="file-summary"><strong id="filename">尚未開啟圖檔</strong><span id="filemeta">DWG / DXF · 圖檔留在這台電腦</span></div>
+   <span class="local-badge" title="沒有上傳圖檔、雲端轉檔或分析追蹤">本機處理</span>
+   <button id="open" class="primary">開啟圖檔 <kbd>O</kbd></button>
+   <input id="file" type="file" accept=".dwg,.dxf" hidden>
+   <button id="undo" title="復原 Ctrl+Z" disabled>復原</button><button id="redo" title="重做 Ctrl+Y / Ctrl+Shift+Z" disabled>重做</button><button id="delete" title="刪除選取圖元 Delete" disabled>刪除選取</button>
+   <button id="save" disabled>另存 DXF</button><button id="pdf" disabled>匯出 PDF</button>
+  </header>
+  <div class="workspace">
+   <aside id="sidebar">
+    <div class="side-head"><strong>圖層</strong><span id="layer-count">0</span><button id="collapse-layers" class="icon-btn" title="收合圖層">‹</button></div>
+    <input id="layer-search" placeholder="搜尋圖層…" aria-label="搜尋圖層">
+    <div class="layer-actions"><button id="layers-on">全部顯示</button><button id="layers-off">全部隱藏</button><button id="layers-reset">原始狀態</button></div>
+    <div id="layers"><p class="muted">開圖後顯示圖層</p></div>
+    <details class="annotation-manager"><summary>新增標註 <span id="annotation-count">0</span></summary><div id="annotation-list"></div></details>
+    <details class="drawing-info"><summary>圖面資訊與相容性</summary><div id="drawing-info">尚無圖面</div></details>
+    <div class="side-footer"><button id="help">操作說明</button><a href="/source.zip" download>GPL 原始碼</a></div>
+   </aside>
+   <main id="viewport" tabindex="0" aria-label="CAD 圖面操作區">
+    <canvas id="drawing" aria-label="CAD 圖面"></canvas><canvas id="overlay" aria-hidden="true"></canvas>
+    <button id="expand-layers" class="floating-button" hidden>圖層</button>
+    <div id="mode-hint"><span id="mode-name">平移</span><span id="instruction">拖曳平移 · 滾輪縮放 · F 全圖</span></div>
+    <div class="view-controls"><button id="fit-primary" title="定位主圖 · 滾輪中鍵連按兩下；遠端物件仍保留">主圖</button><button id="fit" title="全部可見物件 (F)">全圖</button><button id="focus-selection" title="定位選取 (Home)" disabled>定位選取</button><button id="zoom-in" title="放大">＋</button><button id="zoom-out" title="縮小">－</button><button id="theme" title="切換背景">白底</button></div>
+    <section id="empty">
+     <div class="empty-symbol" aria-hidden="true"><i></i><b></b><span>XY</span></div>
+     <p class="eyebrow">OPEN. CHECK. MEASURE.</p><h1>圖一打開，立即確認。</h1>
+     <p>拖入 DWG / DXF，或從電腦選擇圖檔。<br>查原始座標、鎖點量測、修改後帶走。</p>
+     <button id="empty-open" class="primary">從電腦選擇圖檔</button><button id="demo" class="text-button">先試用示範圖</button>
+     <div class="empty-note"><span>01　圖檔不離開本機</span><span>02　原始 WCS 座標</span><span>03　向量 PDF</span></div>
+    </section>
+    <div id="result" hidden role="status"></div>
+    <div id="busy" hidden><div class="spinner"></div><strong id="busy-text">讀取中</strong><span>圖檔僅在本機記憶體中處理</span><button id="cancel-load">取消開圖</button></div>
+    <div id="selection-badge" hidden></div>
+    <div id="toast" role="status" hidden></div>
+    <div id="tool-panel" hidden></div>
+    <nav class="toolbar" aria-label="CAD 工具列">
+     <button data-tool="pan" class="active"><span>✥</span>平移<kbd>H</kbd></button>
+     <button data-tool="select"><span>⌁</span>選取<kbd>V</kbd></button>
+     <button data-tool="coord"><span>⌖</span>座標<kbd>C</kbd></button>
+     <i></i><button data-tool="distance"><span>╱</span>距離<kbd>M</kbd></button>
+     <button data-tool="area"><span>⬡</span>面積<kbd>A</kbd></button>
+     <i></i><button data-tool="move"><span>↗</span>移動<kbd>G</kbd></button>
+     <button data-tool="rotate"><span>⟳</span>旋轉<kbd>R</kbd></button>
+     <button data-tool="text"><span>T</span>文字</button><button data-tool="arrow"><span>⤢</span>箭頭</button><button data-tool="dimension"><span>↔</span>尺寸</button>
+    </nav>
+   </main>
+  </div>
+  <footer class="statusbar"><div class="status-left"><span id="status">就緒</span><span id="coords">WCS　X —　Y —</span><button id="copy-coord" disabled title="複製最後點選的原始 X／Y">複製座標</button></div><div class="status-right"><label><input id="snap" type="checkbox" checked>鎖點</label><label><input id="snap-end" type="checkbox" checked>端點</label><label><input id="snap-mid" type="checkbox" checked>中點</label><label><input id="snap-center" type="checkbox" checked>圓心</label><span id="snap-state">未鎖點</span><label>圖面單位 <select id="unit" aria-label="圖面單位"><option value="0">未指定</option><option value="4">毫米 mm</option><option value="5">公分 cm</option><option value="6">公尺 m</option><option value="1">英吋 in</option><option value="2">英尺 ft</option></select></label></div></footer>
+ </div>
+ <dialog id="pdf-dialog"><div class="dialog-header"><div><span class="eyebrow">PDF EXPORT</span><h2>出圖預覽</h2></div><button id="pdf-close" class="icon-btn" aria-label="關閉出圖預覽">×</button></div><div class="pdf-content"><div class="pdf-options"><label>出圖範圍<select id="pdf-range"><option value="all">全圖（可見圖層）</option><option value="window">框定範圍</option></select></label><button id="pdf-window">在圖上框定範圍</button><label>紙張<select id="pdf-paper"><option>A4</option><option>A3</option></select></label><label>方向<select id="pdf-orientation"><option value="landscape">橫向</option><option value="portrait">直向</option></select></label><p class="pdf-note">白底 · 適合頁面<br>關閉預覽後不留框線，出圖範圍仍記住。<br>僅輸出可見圖層，包含範圍內標註。<br><strong>線條與文字皆為向量</strong>，曲線以向量線段近似。<br>此版本不提供固定出圖比例。</p><p id="pdf-details"></p><button id="pdf-download" class="primary">下載 PDF</button></div><div class="pdf-preview"><canvas id="pdf-preview" aria-label="PDF 紙張預覽"></canvas></div></div></dialog>
+ <dialog id="help-dialog"><div class="dialog-header"><h2>現場操作說明</h2><button id="help-close" class="icon-btn" aria-label="關閉操作說明">×</button></div><div class="help-content"><p><strong>隨時平移：</strong>按住空白鍵或滑鼠中鍵拖曳，放開後繼續原工具。滾輪縮放，滾輪中鍵連按兩下定位主圖，F 回全圖。開圖自動定位可見主圖；若有極遠零散物件，按「全圖」查看全部；Home 或「定位選取」可放大到選取物件。</p><p><strong>窗選：</strong>先切換「選取」，在空白處拖曳。左往右藍窗只選完整包含；右往左綠窗包含相交。Shift 加選，Esc 清除。</p><p><strong>精確量測：</strong>鎖點會顯示端點、中點或圓心；未鎖點時顯示「未鎖點」。座標以原始 WCS 顯示與複製，單位設定不縮放圖元。距離與面積採 XY 平面，非 3D 斜距。</p><p><strong>面積：</strong>逐點點選，Enter 或點回第一點完成，Backspace 撤回。面積以點選頂點間的直線邊界計算。</p><p><strong>移動：</strong>可先按「移動」，點選或窗選物件後直接指定基準點、目標點；不必再次按移動。也可先選物件再按移動。指定基準點前可按 Shift 加選，或輸入 ΔX／ΔY。整批移動一次復原。圖塊視為一個圖元。</p><p><strong>刪除與復原：</strong>先選取文字、尺寸或其他圖元，按 Delete 或「刪除選取」。新增標註也能從左側清單刪除。Ctrl+Z 復原，Ctrl+Y／Ctrl+Shift+Z 重做。刪除圖塊會刪除整個圖塊參照。</p><p><strong>旋轉：</strong>選取後按 R，指定旋轉中心並輸入角度，或依序點選中心、參考方向與目標方向。逆時針為正，整批旋轉一次復原。</p><p><strong>另存：</strong>下載新 DXF；尺寸使用原生 DIMENSION，文字與箭頭保存在 FIELD_ANNOTATIONS 圖層。DWG 轉 DXF 為交換副本，不保證特殊 CAD 物件無損回存。</p><p><strong>相容性：</strong>目前提供 2D 模型空間俯視。圖紙配置、外部參照檔、SHX 特殊字型、填充、網格及部分專用物件不完整支援，請查看圖面資訊。字型使用系統字型替代，文字排版可能不同。</p><p>程式與解析引擎採 GPL-3.0 授權；沒有雲端轉檔或圖檔遙測。重新整理會清空未另存修改。</p><label>舊版 DXF 文字編碼 <select id="encoding"><option value="auto">自動（UTF-8 / Big5）</option><option value="utf-8">UTF-8</option><option value="big5">Big5</option></select></label></div></dialog>
+ <script type="module" src="/src/main.js"></script>
+</body></html>

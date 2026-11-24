@@ -1,0 +1,35 @@
+name: iOS source and simulator build
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: xcodebuild -version
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+      - run: node scripts/verify-calibration.mjs
+      - run: sh scripts/ios-simulator-build.sh --ci
+      - run: sh scripts/ios-simulator-probe.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: FieldCAD-iOS-compatibility-report
+          retention-days: 3
+          path: |
+            ios-build/field-cad-ci-result.json
+            ios-build/ci-calibration.pdf
+            ios-build/simulator.png
+            ios-build/native-simulator.log
+            ios-build/simulators.json
